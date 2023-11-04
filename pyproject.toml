@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlflower"
+dependencies = [
+    'mlflow>=2.0.0',
+    'importlib-metadata; python_version<"3.8"',
+]
+dynamic = ["version", "readme"]
+
+[project.scripts]
+mlflower = "mlflower.__main__:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "mlflower.__version__"}
+readme = {file = ["README.md"]}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mlflower*"]
+
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+
+[tool.isort]
+line_length = 88
+profile = "black"
+
+
+[tool.ruff]
+# Rules: https://docs.astral.sh/ruff/rules
+select = [
+    'A', 'B', 'C', 'D4', 'E', 'F', 'G', 'N', 'S', 'Q', # D
+    'NPY', 'DTZ', 'RUF', 'PT', 'PL', 'FA', 'SIM', 'UP',
+    'EXE', 'ICN', 'PIE', 'PYI', 'TID', 'YTT', 'ANN', 'BLE',
+]
+ignore = ["A003", "ANN101", "ANN204", "ANN401", "ANN"]
+
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint.per-file-ignores]
+"__main__.py" = ["PLR0913"]
+
+
+[tool.ruff.mccabe]
+max-complexity = 8
