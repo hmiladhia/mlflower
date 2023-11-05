@@ -17,7 +17,9 @@ def _topological_sort_rec(
     return [*sorted_nodes, node]
 
 
-def topological_sort(nodes: dict[str, EntryPoint], root=None) -> list[str]:
+def topological_sort(
+    nodes: dict[str, EntryPoint], root: str | None = None
+) -> list[str]:
     if root and nodes[root].depends_on:
         raise ValueError(
             f"Root cannot have dependencies: {root} -> {nodes[root].depends_on}"

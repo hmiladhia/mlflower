@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import os
+from pathlib import Path
 
 import mlflow
 import numpy as np
@@ -8,12 +11,12 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 
 
-def export(output_dir, filename, data):
+def export(output_dir: str | Path, filename: str, data: np.array) -> None:
     path = os.path.join(output_dir, filename)
     pd.DataFrame(data).to_csv(path, index=False)
 
 
-def main(output_directory: str, test_size: float = 0.3, seed: int = 42):
+def main(output_directory: str, test_size: float = 0.3, seed: int = 42) -> None:
     print("# Load data")
     digits = datasets.load_digits()
 

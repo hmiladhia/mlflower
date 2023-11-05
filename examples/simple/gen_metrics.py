@@ -7,7 +7,7 @@ import typer
 from sklearn import metrics
 
 
-def main(test_data: str, model_uri: str):
+def main(test_data: str, model_uri: str) -> None:
     mlflow.sklearn.autolog()
 
     print("Load test data")

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import mlflow
 from mlflow.entities import Run
 from mlflow.projects import SubmittedRun
@@ -13,7 +15,7 @@ class OrchestrationError(Exception):
 
 
 class WorkflowRun:
-    def __init__(self, entry_point: EntryPoint, run=None):
+    def __init__(self, entry_point: EntryPoint, run: Run | None = None):
         self.entry_point = entry_point
 
         self._submitted_run: SubmittedRun | None = None
@@ -61,14 +63,14 @@ class WorkflowRun:
 
         return self._submitted_run
 
-    def _resolve_params(self, w_runs: dict[str, WorkflowRun]):
+    def _resolve_params(self, w_runs: dict[str, WorkflowRun]) -> dict[str, Any]:
         return {
             key: get_param(param, w_runs)
             for key, param in self.entry_point.parameter_source.items()
         }
 
 
-def get_param(param: dict, w_runs: dict[str, WorkflowRun]):
+def get_param(param: dict, w_runs: dict[str, WorkflowRun]) -> Any:
     source_type = param[SOURCE_TYPE_KEY]
     entry_point_id = param[SOURCE_ID_KEY]
     key = param[SOURCE_CONTENT_KEY]

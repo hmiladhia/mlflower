@@ -43,7 +43,7 @@ select = [
     'NPY', 'DTZ', 'RUF', 'PT', 'PL', 'FA', 'SIM', 'UP',
     'EXE', 'ICN', 'PIE', 'PYI', 'TID', 'YTT', 'ANN', 'BLE',
 ]
-ignore = ["A003", "ANN101", "ANN204", "ANN401", "ANN"]
+ignore = ["A003", "ANN101", "ANN102", "ANN204", "ANN401"]
 
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 line-length = 100

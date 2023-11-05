@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -24,7 +25,9 @@ MLFLOWER_FILENAME = "MLFlower"
 MLRPOJECT_FILENAME = "MLProject"
 
 
-def get_raw_entry_points(path, entry_key: str | None = None):
+def get_raw_entry_points(
+    path: str | Path, entry_key: str | None = None
+) -> dict[str, Any]:
     project = load_project(path)
     steps = project.get(ENTRY_POINTS_KEY, {})
 
@@ -36,7 +39,7 @@ def get_raw_entry_points(path, entry_key: str | None = None):
     )
 
 
-def load_project(path):
+def load_project(path: str | Path) -> dict[str, Any]:
     project_path = _get_file(path, MLFLOWER_FILENAME, MLRPOJECT_FILENAME)
 
     if project_path is None:
@@ -46,7 +49,7 @@ def load_project(path):
     return yaml.load(content, yaml.SafeLoader)
 
 
-def _load_entry(entry_point: dict[str], key: str, path: str):
+def _load_entry(entry_point: dict[str], key: str, path: str) -> dict[str, Any]:
     source = entry_point.get(PROJECT_KEY, None)
     entry = entry_point.setdefault(ENTRY_KEY, key)
     entry_point.pop(COMMAND_KEY, None)
@@ -79,7 +82,9 @@ def _load_entry(entry_point: dict[str], key: str, path: str):
     return new_entry_point
 
 
-def _get_consolidate_params(entry_point):
+def _get_consolidate_params(
+    entry_point: dict[str, str | dict[str]]
+) -> dict[str, dict[str]]:
     entry_point_params = {}
     for param_name, param in entry_point.get(PARAMS_KEY, {}).items():
         if isinstance(param, dict):
@@ -90,7 +95,7 @@ def _get_consolidate_params(entry_point):
     return entry_point_params
 
 
-def _consolidate_dependency(entry_points):
+def _consolidate_dependency(entry_points: dict[str]) -> dict[str]:
     for entry_point in entry_points.values():
         depend_on = entry_point.setdefault(DEPENDS_ON_KEY, set())
         for param in entry_point.get(PARAM_SOURCE_KEY, {}).values():
@@ -102,7 +107,7 @@ def _consolidate_dependency(entry_points):
     return entry_points
 
 
-def _get_file(path, *alternatives):
+def _get_file(path: str | Path, *alternatives: str) -> Path:
     file_name, *alternatives = alternatives
     return next(
         (p for p in Path(path).iterdir() if p.name.upper() == file_name.upper()),

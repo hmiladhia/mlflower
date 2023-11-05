@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
 from .project import PARAM_DEFAULT_KEY, get_raw_entry_points
 
@@ -14,7 +16,7 @@ class EntryPoint:
     depends_on: set[str] = field(default_factory=set)
 
     @property
-    def defaults(self):
+    def defaults(self) -> dict[str, Any]:
         return {
             key: param[PARAM_DEFAULT_KEY]
             for key, param in self.parameters.items()
@@ -22,7 +24,7 @@ class EntryPoint:
         }
 
 
-def get_entry_points(path) -> dict[str, EntryPoint]:
+def get_entry_points(path: str | Path) -> dict[str, EntryPoint]:
     entry_points = get_raw_entry_points(path)
 
     return {key: EntryPoint(**entry) for key, entry in entry_points.items()}

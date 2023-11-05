@@ -40,8 +40,11 @@ class Workflow(SubmittedRun):
 
     @classmethod
     def from_project_uri(
-        cls, project_uri, active_run=None, root_entry_point: str | None = None
-    ):
+        cls,
+        project_uri: str,
+        active_run: Run | None = None,
+        root_entry_point: str | None = None,
+    ) -> Workflow:
         entry_points = get_entry_points(project_uri)
 
         return cls(entry_points, active_run, root_entry_point)
@@ -50,7 +53,7 @@ class Workflow(SubmittedRun):
         for key in self._resolution_order:
             yield key, self.workflow_runs[key]
 
-    def run(self, **run_args) -> None:
+    def run(self, run_args: dict[str, str | bool | None] | None = None) -> None:
         if self.get_status() != RunStatus.SCHEDULED:
             return
 
@@ -76,17 +79,17 @@ class Workflow(SubmittedRun):
 
         return True
 
-    def cancel(self):
+    def cancel(self) -> None:
         return self._cleanup(RunStatus.KILLED)
 
-    def fail(self):
+    def fail(self) -> None:
         return self._cleanup(RunStatus.FAILED)
 
-    def get_status(self):
+    def get_status(self) -> RunStatus:
         return self._status
 
     @property
-    def run_id(self):
+    def run_id(self) -> str:
         return self.active_run.info.run_id
 
     def _cleanup(self, status: RunStatus) -> None:
@@ -108,7 +111,10 @@ class Workflow(SubmittedRun):
             mlflow.end_run(RunStatus.to_string(status))
 
 
-def get_run_args(active_run, run_args):
+def get_run_args(
+    active_run: Run, run_args: dict[str, str | None] | None
+) -> dict[str, str | None]:
+    run_args = run_args or {}
     backend = run_args.pop("backend", None) or active_run.data.tags.get(
         "mlflow.project.backend", "local"
     )

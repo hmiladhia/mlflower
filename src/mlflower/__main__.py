@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import os
 import sys
+from typing import Any
 
 import click
 import mlflow
-from mlflow import MlflowClient
+from mlflow import ActiveRun, MlflowClient
 from mlflow.entities import Param, RunStatus
 from mlflow.environment_variables import MLFLOW_EXPERIMENT_ID, MLFLOW_EXPERIMENT_NAME
 
@@ -116,20 +117,20 @@ from .workflow import Workflow
     ),
 )
 def main(
-    uri,
-    entry_point,
-    param_list,
-    docker_args,
-    experiment_name,
-    experiment_id,
-    backend,
-    backend_config,
-    env_manager,
-    storage_dir,
-    run_name,
-    build_image,
-    sequential,
-):
+    uri: str | None,
+    entry_point: str | None,
+    param_list: list[str] | None,
+    docker_args: list[str] | None,
+    experiment_name: str | None,
+    experiment_id: str | None,
+    backend: str | None,
+    backend_config: str | None,
+    env_manager: str | None,
+    storage_dir: str | None,
+    run_name: str | None,
+    build_image: str | None,
+    sequential: bool,
+) -> None:
 
     project_uri = uri or os.getcwd()
     experiment_id = get_experiment_id(project_uri, experiment_id, experiment_name)
@@ -142,22 +143,25 @@ def main(
         workflow = Workflow.from_project_uri(
             project_uri, active_run, root_entry_point=entry_point
         )
+
         workflow.run(
-            docker_args=_to_dict(docker_args, True),
-            backend=backend,
-            backend_config=backend_config,
-            env_manager=env_manager,
-            storage_dir=storage_dir,
-            build_image=build_image,
-            sequential=sequential,
-            experiment_id=experiment_id,
+            {
+                "docker_args": _to_dict(docker_args, True),
+                "backend": backend,
+                "backend_config": backend_config,
+                "env_manager": env_manager,
+                "storage_dir": storage_dir,
+                "build_image": build_image,
+                "sequential": sequential,
+                "experiment_id": experiment_id,
+            }
         )
 
         if workflow.get_status() in (RunStatus.FAILED, RunStatus.KILLED):
             sys.exit(1)
 
 
-def update_params(active_run, param_dict):
+def update_params(active_run: ActiveRun, param_dict: dict[str, Any]) -> None:
     if not param_dict:
         return
 
@@ -166,7 +170,7 @@ def update_params(active_run, param_dict):
     MlflowClient().log_batch(active_run.info.run_id, params=params)
 
 
-def _to_dict(arguments, allow_flags=False) -> dict[str]:
+def _to_dict(arguments: list[str], allow_flags: bool = False) -> dict[str]:
     user_dict = {}
     for arg in arguments:
         name, *values = arg.split("=", 1)
@@ -182,7 +186,11 @@ def _to_dict(arguments, allow_flags=False) -> dict[str]:
     return user_dict
 
 
-def get_experiment_id(project_uri, experiment_id=None, experiment_name=None):
+def get_experiment_id(
+    project_uri: str,
+    experiment_id: str | None = None,
+    experiment_name: str | None = None,
+) -> str:
     if experiment_id:
         return experiment_id
 

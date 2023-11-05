@@ -6,7 +6,7 @@ import typer
 from sklearn.neural_network import MLPClassifier
 
 
-def main(train_data: str):
+def main(train_data: str) -> None:
     mlflow.sklearn.autolog()
     print("Load data")
     data_path = Path(train_data, "train_data.csv")
@@ -21,9 +21,6 @@ def main(train_data: str):
     print("Train Model")
     clf = MLPClassifier(hidden_layer_sizes=(50,))
     clf.fit(x_train, y_train)
-
-    # mlflow.sklearn.log_model(clf, "my_mlp_model")
-    return clf
 
 
 if __name__ == "__main__":
