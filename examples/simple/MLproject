@@ -1,0 +1,43 @@
+name: mlflower-simple-example
+
+conda_env: conda.yaml
+
+
+entry_points:
+  load_data:
+    parameters:
+       output_directory: path
+       test_size: {type: float, default: 0.3}
+       seed: {type: int, default: 42}
+    parameter_source:
+      output_directory: {type: parameter, id: main, key: input_data}
+      test_size: {type: parameter, id: main, key: test_size}
+      seed: {type: parameter, id: main, key: seed}
+    command: "python load_data.py {output_directory} --test-size {test_size} --seed {seed}"
+
+  train_model:
+    parameters:
+       input_directory: path
+
+    parameter_source:
+      input_directory: {type: parameter, id: load_data, key: output_directory}
+
+    command: "python train_model.py {input_directory}"
+
+  gen_metrics:
+    parameters:
+      input_directory: path
+      input_model: uri
+
+    parameter_source:
+      input_directory: { type: parameter, id: load_data, key: output_directory }
+      input_model: { type: artifact, id: train_model, key: model }
+
+    command: "python gen_metrics.py {input_directory} {input_model}"
+
+  main:
+    parameters:
+      input_data: { type: path, default: "data/"}
+      test_size: { type: float, default: 0.3 }
+      seed: { type: int, default: 42 }
+    command: "python -m mlflower ."
