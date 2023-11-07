@@ -4,11 +4,12 @@ import contextlib
 from typing import Iterator
 
 import mlflow
+from mlflow import MlflowClient
 from mlflow.entities import Run, RunStatus
 from mlflow.projects import SubmittedRun
 
 from .entry_point import EntryPoint, get_entry_points
-from .graph_utils import topological_sort
+from .graph_utils import get_mermaid_graph, to_link, topological_sort
 from .workflow_run import WorkflowRun
 
 
@@ -32,6 +33,9 @@ class Workflow(SubmittedRun):
             )
             for key, entry_point in entry_points.items()
         }
+
+        graph_repr = to_link(get_mermaid_graph(entry_points, root_entry_point))
+        MlflowClient().set_tag(self.run_id, "mlflow.note.content", graph_repr)
 
         self._resolution_order = iter(
             topological_sort(entry_points, root=root_entry_point)
