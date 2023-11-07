@@ -66,7 +66,7 @@ class WorkflowRun:
     def _resolve_params(self, w_runs: dict[str, WorkflowRun]) -> dict[str, Any]:
         return {
             key: get_param(param, w_runs)
-            for key, param in self.entry_point.parameter_source.items()
+            for key, param in self.entry_point.workflow_parameters.items()
         }
 
 

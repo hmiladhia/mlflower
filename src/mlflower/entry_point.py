@@ -12,7 +12,7 @@ class EntryPoint:
     source: str | None = None
     entry: str = "main"
     parameters: dict[str] = field(default_factory=dict)
-    parameter_source: dict[str] = field(default_factory=dict)
+    workflow_parameters: dict[str] = field(default_factory=dict)
     depends_on: set[str] = field(default_factory=set)
 
     @property

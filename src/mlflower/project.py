@@ -12,7 +12,7 @@ ENTRY_KEY = "entry"
 COMMAND_KEY = "command"
 DEPENDS_ON_KEY = "depends_on"
 PARAMS_KEY = "parameters"
-PARAM_SOURCE_KEY = "parameter_source"
+PARAM_SOURCE_KEY = "workflow_parameters"
 
 PARAM_TYPE_KEY = "type"
 PARAM_DEFAULT_KEY = "default"

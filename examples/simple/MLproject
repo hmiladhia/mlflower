@@ -9,17 +9,19 @@ entry_points:
        output_directory: path
        test_size: {type: float, default: 0.3}
        seed: {type: int, default: 42}
-    parameter_source:
+
+    workflow_parameters:
       output_directory: {type: parameter, id: main, key: input_data}
       test_size: {type: parameter, id: main, key: test_size}
       seed: {type: parameter, id: main, key: seed}
+
     command: "python load_data.py {output_directory} --test-size {test_size} --seed {seed}"
 
   train_model:
     parameters:
        input_directory: path
 
-    parameter_source:
+    workflow_parameters:
       input_directory: {type: parameter, id: load_data, key: output_directory}
 
     command: "python train_model.py {input_directory}"
@@ -29,7 +31,7 @@ entry_points:
       input_directory: path
       input_model: uri
 
-    parameter_source:
+    workflow_parameters:
       input_directory: { type: parameter, id: load_data, key: output_directory }
       input_model: { type: artifact, id: train_model, key: model }
 
