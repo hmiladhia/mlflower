@@ -1,0 +1,31 @@
+name: mlflower-multi-env-example
+
+conda_env: conda.yaml
+
+
+entry_points:
+  load_data:
+    source: "load_data/"
+    workflow_parameters:
+      output_directory: {type: parameter, id: main, key: input_data}
+      test_size: {type: parameter, id: main, key: test_size}
+      seed: {type: parameter, id: main, key: seed}
+
+  train_model:
+    source: train_model
+    entry: main
+    workflow_parameters:
+      input_directory: {type: parameter, id: load_data, key: output_directory}
+
+  gen_metrics:
+    source: gen_metrics
+    workflow_parameters:
+      input_directory: { type: parameter, id: load_data, key: output_directory }
+      input_model: { type: artifact, id: train_model, key: model }
+
+  main:
+    parameters:
+      input_data: { type: path, default: "data/"}
+      test_size: { type: float, default: 0.3 }
+      seed: { type: int, default: 42 }
+    command: "python -m mlflower ."

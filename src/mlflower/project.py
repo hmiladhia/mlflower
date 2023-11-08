@@ -25,9 +25,7 @@ MLFLOWER_FILENAME = "MLFlower"
 MLRPOJECT_FILENAME = "MLProject"
 
 
-def get_raw_entry_points(
-    path: str | Path, entry_key: str | None = None
-) -> dict[str, Any]:
+def get_raw_entry_points(path: str, entry_key: str | None = None) -> dict[str, Any]:
     project = load_project(path)
     steps = project.get(ENTRY_POINTS_KEY, {})
 
@@ -65,7 +63,7 @@ def _load_entry(entry_point: dict[str], key: str, path: str) -> dict[str, Any]:
         return entry_point
 
     if not Path(source).is_absolute():
-        source = Path(path).joinpath(source).resolve()
+        source = Path(path).joinpath(source).resolve().as_posix()
 
     new_entry_point = get_raw_entry_points(source, entry)
     new_entry_point.setdefault(PARAMS_KEY, {}).update(entry_point.get(PARAMS_KEY, {}))

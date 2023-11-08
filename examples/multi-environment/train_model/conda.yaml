@@ -1,0 +1,16 @@
+name: training-env
+
+channels:
+  - defaults
+
+dependencies:
+  - python=3.8
+  - pip:
+      - click==8.1.7
+      - typer==0.9.0
+      - matplotlib==3.7.3
+      - pandas==2.0.3
+      - numpy==1.24.4
+      - scipy==1.10.1
+      - scikit-learn==1.3.2
+      - mlflow==2.8.0

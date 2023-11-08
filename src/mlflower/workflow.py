@@ -68,7 +68,10 @@ class Workflow(SubmittedRun):
             if not wrun.wait_dependencies(self.runtime_context):
                 return self.fail()
 
-            self.runtime_context[key] = wrun.submit(self.workflow_runs, run_args)
+            current_run_args = {**run_args, "run_name": key}
+            self.runtime_context[key] = wrun.submit(
+                self.workflow_runs, current_run_args
+            )
 
         if not self.wait():
             return self.fail()

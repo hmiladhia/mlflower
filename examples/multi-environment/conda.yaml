@@ -1,0 +1,12 @@
+name: mlflower-env
+
+channels:
+  - defaults
+
+dependencies:
+  - python=3.8
+  - pip:
+      - click==8.1.7
+      - mlflow==2.8.0
+      - virtualenv
+      - git+https://github.com/hmiladhia/mlflower

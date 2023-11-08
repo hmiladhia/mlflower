@@ -57,7 +57,6 @@ class WorkflowRun:
             self.entry_point.source,
             self.entry_point.entry,
             parameters=self._resolve_params(w_runs),
-            run_name=self.entry_point.entry,
             **(args or {}),
         )
 

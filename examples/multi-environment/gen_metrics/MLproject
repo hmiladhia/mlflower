@@ -1,0 +1,11 @@
+name: gen-metrics
+
+conda_env: conda.yaml
+
+entry_points:
+  gen_metrics:
+    parameters:
+      input_directory: path
+      input_model: uri
+
+    command: "python gen_metrics.py {input_directory} {input_model}"

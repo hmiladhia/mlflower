@@ -1,0 +1,11 @@
+name: training
+
+conda_env: conda.yaml
+
+
+entry_points:
+  main:
+    parameters:
+       input_directory: path
+
+    command: "python train_model.py {input_directory}"

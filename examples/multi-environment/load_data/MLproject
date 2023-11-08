@@ -1,0 +1,13 @@
+name: data-ingestion
+
+conda_env: conda.yaml
+
+
+entry_points:
+  load_data:
+    parameters:
+       output_directory: path
+       test_size: {type: float, default: 0.3}
+       seed: {type: int, default: 42}
+
+    command: "python load_data.py {output_directory} --test-size {test_size} --seed {seed}"
