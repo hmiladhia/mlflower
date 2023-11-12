@@ -6,8 +6,8 @@ from typing import Any
 
 import click
 import mlflow
-from mlflow import ActiveRun, MlflowClient
-from mlflow.entities import Param, RunStatus
+from mlflow import ActiveRun
+from mlflow.entities import RunStatus
 from mlflow.environment_variables import MLFLOW_EXPERIMENT_ID, MLFLOW_EXPERIMENT_NAME
 
 from mlflower.project import load_project
@@ -146,14 +146,14 @@ def main(
 
         workflow.run(
             {
-                "docker_args": _to_dict(docker_args, True),
                 "backend": backend,
-                "backend_config": backend_config,
                 "env_manager": env_manager,
                 "storage_dir": storage_dir,
-                "build_image": build_image,
                 "sequential": sequential,
                 "experiment_id": experiment_id,
+                "backend_config": backend_config,
+                "build_image": build_image,
+                "docker_args": _to_dict(docker_args, allow_flags=True),
             }
         )
 
@@ -165,9 +165,12 @@ def update_params(active_run: ActiveRun, param_dict: dict[str, Any]) -> None:
     if not param_dict:
         return
 
-    params = [Param(key, value) for key, value in param_dict.items()]
     active_run.data.params.update(param_dict)
-    MlflowClient().log_batch(active_run.info.run_id, params=params)
+    try:
+        for key, value in param_dict.items():
+            mlflow.log_param(key, value)
+    except mlflow.exceptions.MlflowException:
+        pass
 
 
 def _to_dict(arguments: list[str], allow_flags: bool = False) -> dict[str]:
@@ -175,7 +178,7 @@ def _to_dict(arguments: list[str], allow_flags: bool = False) -> dict[str]:
     for arg in arguments:
         name, *values = arg.split("=", 1)
 
-        if len(values) == 0 and allow_flags:
+        if allow_flags and not values:
             value = True
         elif len(values) == 1:
             value = next(iter(values))
@@ -190,7 +193,7 @@ def get_experiment_id(
     project_uri: str,
     experiment_id: str | None = None,
     experiment_name: str | None = None,
-) -> str:
+) -> str | None:
     if experiment_id:
         return experiment_id
 

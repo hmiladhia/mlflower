@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+from contextlib import contextmanager
 from typing import Any
 
 import mlflow
@@ -53,8 +55,10 @@ class WorkflowRun:
         if self._submitted_run is not None:
             raise OrchestrationError()
 
+        source = self.entry_point.source
+        # with working_directory(self.entry_point.source) as source:
         self._submitted_run = mlflow.run(
-            self.entry_point.source,
+            source,
             self.entry_point.entry,
             parameters=self._resolve_params(w_runs),
             **(args or {}),
@@ -88,3 +92,14 @@ def get_param(param: dict, w_runs: dict[str, WorkflowRun]) -> Any:
         return wrun.entry_point.defaults[key]
 
     raise ValueError(f"Unsupported source type: {source_type}")
+
+
+@contextmanager
+def working_directory(path: str) -> str:
+    original_path = os.getcwd()
+
+    try:
+        os.chdir(path)
+        yield path
+    finally:
+        os.chdir(original_path)
