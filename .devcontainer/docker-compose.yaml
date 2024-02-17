@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  host:
+    external: true
+
+
+services:
+  # gitea:
+  #   image: gitea/gitea:latest
+  #   container_name: gitea
+  #   environment:
+  #     - USER_UID=1000
+  #     - USER_GID=1000
+  #   restart: always
+  #   network_mode: host
+  #   volumes:
+  #     - ./gitea:/data
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   prts:
+  #     - "3000:3000"
+  #     - "222:22"
+
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: always
+    # network_mode: host
+    ports:
+      - '8080:80'
+      - '5443:443'
+      - '222:22'
+    volumes:
+      - '$GITLAB_HOME/config:/etc/gitlab'
+      - '$GITLAB_HOME/logs:/var/log/gitlab'
+      - '$GITLAB_HOME/data:/var/opt/gitlab'
+    shm_size: '256m'

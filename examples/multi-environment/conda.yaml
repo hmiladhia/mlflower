@@ -9,4 +9,5 @@ dependencies:
       - click==8.1.7
       - mlflow==2.8.0
       - virtualenv
+      - pyenv
       - git+https://github.com/hmiladhia/mlflower

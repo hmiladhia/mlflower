@@ -1,6 +1,6 @@
 name: gen-metrics
 
-conda_env: conda.yaml
+python_env: python_env.yaml
 
 entry_points:
   gen_metrics:
